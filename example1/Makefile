@@ -6,7 +6,7 @@ SRCS=data.s
 SRCH=
 OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
 OTHEROBJS=
-DATA=stabfnt0.bmp
+DATA=stabfnt0.bmp font_offset.ml
 EXTRAS=stabfnt0.rgb stabfnt0.dat
 RMVLIBS=display.o interrupt.o rmvlib.a
 
