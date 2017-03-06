@@ -7,10 +7,10 @@ all: .depend $(PROJECT).cof $(PROJECT).bin
 .PHONY: all dist alpine bjl catnip debug skunk reset
 
 $(PROJECT).cof: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
-	$(ALN) $(ALNFLAGS) -e -o $(PROJECT).cof crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a 
+	$(ALN) $(ALNFLAGS) -e -o $(PROJECT).cof crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
 
 $(PROJECT).bin: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
-	$(ALN) $(ALNFLAGS) -n -o $(PROJECT).bin crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a 
+	$(ALN) $(ALNFLAGS) -n -o $(PROJECT).bin crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
 
 %.o: %.s
 	$(MADMAC) $(MACFLAGS) $<
@@ -43,7 +43,7 @@ reset:
 	$(JCP) -r || true
 
 clean:
-	rm -f *~ $(OBJS) $(PROJECT).cof $(PROJECT).bin
+	rm -f *~ $(OBJS) $(PROJECT).cof $(PROJECT).bin $(EXTRAS)
 
 .depend: $(SRCC)
 	$(CC) $(CFLAGS) -MM $(SRCC) > .depend || [ "$(SRCC)" = "" ]
