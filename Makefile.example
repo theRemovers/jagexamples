@@ -1,0 +1,51 @@
+DISTFILES=Makefile Makefile.config Makefile.example README $(SRCC) $(SRCH) $(SRCS) $(OTHEROBJS) $(DATA)
+
+TARFILE=$(PROJECT).tar.gz
+
+all: .depend $(PROJECT).cof $(PROJECT).bin
+
+.PHONY: all dist alpine bjl catnip debug skunk reset
+
+$(PROJECT).cof: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
+	$(ALN) $(ALNFLAGS) -e -o $(PROJECT).cof crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a 
+
+$(PROJECT).bin: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
+	$(ALN) $(ALNFLAGS) -n -o $(PROJECT).bin crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a 
+
+%.o: %.s
+	$(MADMAC) $(MACFLAGS) $<
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
+dist: $(PROJECT).cof $(PROJECT).bin
+	mkdir -p $(PROJECT)
+	cp -a $(DISTFILES) $(PROJECT).cof $(PROJECT).bin $(PROJECT)
+	tar cfvzh $(TARFILE) $(PROJECT)
+	rm -rf $(PROJECT)
+
+alpine: $(PROJECT).cof
+	$(RDB) $<
+
+bjl: $(PROJECT).bin
+	$(LO) -8 $<
+
+catnip: $(PROJECT).bin
+	$(CATNIPLO) $< $(CATNIPTTY)
+
+debug: $(PROJECT).cof
+	$(WDB) $<
+
+skunk: $(PROJECT).cof
+	$(JCP) $<
+
+reset:
+	$(JCP) -r || true
+
+clean:
+	rm -f *~ $(OBJS) $(PROJECT).cof $(PROJECT).bin
+
+.depend: $(SRCC)
+	$(CC) $(CFLAGS) -MM $(SRCC) > .depend || [ "$(SRCC)" = "" ]
+
+-include .depend
