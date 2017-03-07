@@ -4,8 +4,6 @@ http://removers.atari.org/
 
 Do not forget to define the following environment variables:
 
-export M68KTOOLS=/path/to/m68k-aout-gcc
-
 export JAGPATH=/path/to/Jaguar-tree
 
 It is assumed that Jaguar-tree has a 'bin' subdirectory which contains
