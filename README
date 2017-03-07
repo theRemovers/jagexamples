@@ -1,5 +1,5 @@
 A little example of use of the Removers library.
-(c) 2006-2012 The Removers
+(c) 2006-2017 The Removers
 http://removers.atari.org/
 
 Do not forget to define the following environment variables:
@@ -12,5 +12,8 @@ It is assumed that Jaguar-tree has a 'bin' subdirectory which contains
 - the Atari tools (MadMac, ALN, rdbjag, wdb) 
 - the BJL loader (lo)
 - the Skunk loader (jcp)
+- the Removers Jaguar image converter
 
 If not, please modify Makefile.config according to your configuration.
+
+You may also need ocaml to build some examples from source code.
