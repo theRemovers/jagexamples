@@ -5,7 +5,7 @@
 _willowPal:
         incbin  "willow_rgb.pal"
 
-        .globl  _willowMap
-        .phrase
-_willowMap:
-        incbin  "willow.map"
+        .globl  _willowPacked
+        .long
+_willowPacked:
+        incbin  "willow.map.lz77"

@@ -12,10 +12,12 @@
 
 #include <blit.h>
 
+#include <lz77.h>
+
 #define NCOLS 42
 
 extern uint16_t willowPal[NCOLS];
-extern phrase willowMap;
+extern uint8_t willowPacked[];
 
 #define WIDTH 192
 #define HEIGHT 180
@@ -25,8 +27,10 @@ int main(int argc, char *argv[]) {
   init_interrupts();
   init_display_driver();
 
-  phrase *map = &willowMap;
   uint16_t *pal = willowPal;
+
+  void *gpu_addr = &_GPU_FREE_RAM;
+  void *lz77_addr = init_lz77(gpu_addr);
 
   display *d = new_display(0);
   d->x = 16;
@@ -35,7 +39,9 @@ int main(int argc, char *argv[]) {
   show_display(d);
 
   screen *original = new_screen();
-  set_simple_screen(DEPTH8, WIDTH, HEIGHT, original, map);
+  phrase *map=alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, original);
+
+  lz77_unpack(&willowPacked, (uint8_t*)map);
 
   memcpy(TOMREGS->clut1, pal, NCOLS*sizeof(uint16_t));
 
@@ -44,9 +50,6 @@ int main(int argc, char *argv[]) {
   sprite *s1 = sprite_of_screen(0,0,original);
 
   attach_sprite_to_display_at_layer(s1,d,1);
-
-  long old_joy = 0;
-  long joy = 0;
 
   while(1) {
     vsync();
