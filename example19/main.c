@@ -12,7 +12,9 @@
 
 #include <blit.h>
 
-extern uint16_t willowPal[42];
+#define NCOLS 42
+
+extern uint16_t willowPal[NCOLS];
 extern phrase willowMap;
 
 #define WIDTH 192
@@ -35,12 +37,7 @@ int main(int argc, char *argv[]) {
   screen *original = new_screen();
   set_simple_screen(DEPTH8, WIDTH, HEIGHT, original, map);
 
-  {
-    int i;
-    for(i = 0; i < 42; i++) {
-      TOMREGS->clut1[i] = pal[i];
-    }
-  }
+  memcpy(TOMREGS->clut1, pal, NCOLS*sizeof(uint16_t));
 
   joypad_state *j_state = malloc(sizeof(joypad_state));
 
