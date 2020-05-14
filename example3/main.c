@@ -18,7 +18,7 @@ extern short int wave[4096];
 screen *screens[NB_SCREENS];
 
 #define SPRITEW 64
-#define SPRITEH 48
+#define SPRITEH 64
 
 int main(int argc, char *argv[]) {
   TOMREGS->vmode = RGB16|CSYNC|BGEN|PWIDTH4|VIDEN;

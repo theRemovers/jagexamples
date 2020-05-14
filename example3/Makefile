@@ -6,16 +6,20 @@ SRCS=data.s
 SRCH=
 OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
 OTHEROBJS=
-DATA=wave.ml JagCF2.rgb jagware.rgb
-EXTRAS=wave.dat
+DATA=wave.ml jagware.png eye.png
+EXTRAS=wave.dat jagware.rgb eye.rgb
 RMVLIBS=display.o interrupt.o rmvlib.a
-
-OCAML=ocaml
 
 include	Makefile.example
 
-data.o: JagCF2.rgb wave.dat jagware.rgb
+jagware.rgb: jagware.png
+	$(CONVERTER) --binary $<
+
+eye.rgb: eye.png
+	$(CONVERTER) --binary $<
+
+data.o: wave.dat jagware.rgb eye.rgb
 
 wave.dat: wave.ml
-	$(OCAML) wave.ml > wave.dat
+	$(OCAML) wave.ml > $@
 

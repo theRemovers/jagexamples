@@ -8,7 +8,7 @@ _jagware_logo:
 	.globl	_sprite_gfx
 	.phrase
 _sprite_gfx:
-	incbin	"JagCF2.rgb"
+	incbin	"eye.rgb"
 
 	.globl	_wave
 	.long
