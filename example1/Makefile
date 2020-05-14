@@ -1,7 +1,7 @@
 include	Makefile.config
 
 PROJECT=example1
-SRCC=example1.c
+SRCC=main.c
 SRCS=data.s
 SRCH=
 OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
