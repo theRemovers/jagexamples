@@ -3,7 +3,7 @@ include	Makefile.config
 PROJECT=example11
 SRCC=main.c
 SRCS=data.s 3D.s
-SRCH=
+SRCH=data.h
 OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
 OTHEROBJS=
 DATA=battlesphere_title.jpg
