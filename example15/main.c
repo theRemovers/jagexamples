@@ -38,7 +38,11 @@ int main(int argc, char *argv[]) {
   init_interrupts();
   init_display_driver();
 
+#ifdef PAULA
   int replay_freq = 50000;
+#else
+  int replay_freq = 16000;
+#endif
   replay_freq = init_sound_driver(replay_freq);
 
   display *d = new_display(0);
