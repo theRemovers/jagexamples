@@ -51,12 +51,12 @@ void copy_column(screen *tiles, screen *tgt, level_t *lvl, int lrow, int hrow, i
   }
 }
 
-void copy_zone(screen *tiles, screen *tgt, int x, int y, int lrow, int hrow, int lcol, int hcol) {
+void copy_zone(screen *tiles, screen *tgt, level_t *lvl, int x, int y, int lrow, int hrow, int lcol, int hcol) {
   int i;
   tgt->x = x;
   for(i = lcol; i < hcol; i++) {
     tgt->y = y;
-    copy_column(tiles, tgt, &egyptLevel, lrow, hrow, i);
+    copy_column(tiles, tgt, lvl, lrow, hrow, i);
     tgt->x += TILES_W;
   }
 }
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
   attach_sprite_to_display_at_layer(screen2_sprite, d, 0);
   attach_sprite_to_display_at_layer(black_border, d, 1);
 
-  copy_zone(tiles, screen1, 0, 0, 0, HEIGHT/TILES_H, 0, WIDTH/TILES_W);
+  copy_zone(tiles, screen1, &egyptLevel, 0, 0, 0, HEIGHT/TILES_H, 0, WIDTH/TILES_W);
 
   show_display(d);
 
