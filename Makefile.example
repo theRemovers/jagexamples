@@ -7,10 +7,17 @@ all: .depend $(PROJECT).cof $(PROJECT).bin
 .PHONY: all dist alpine bjl catnip debug skunk reset
 
 $(PROJECT).cof: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
-	$(ALN) $(ALNFLAGS) -e -o $(PROJECT).cof crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
+	$(ALN) -a 4000 x x $(ALNFLAGS) -e -o $(PROJECT).cof crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
 
 $(PROJECT).bin: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
-	$(ALN) $(ALNFLAGS) -n -o $(PROJECT).bin crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
+	$(ALN) -a 4000 x x $(ALNFLAGS) -n -o $(PROJECT).bin crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
+
+$(PROJECT).img: $(SRCH) $(OBJS) Makefile $(OTHEROBJS)
+	$(ALN) -a 802000 x 4000 $(ALNFLAGS) -n -o $(PROJECT).img crt0.o $(OBJS) $(OTHEROBJS) $(RMVLIBS) jlibc.a libgcc.a
+
+$(PROJECT).rom: $(PROJECT).img Univ.bin
+	cat Univ.bin > $@
+	cat $(PROJECT).img >> $@
 
 %.o: %.s
 	$(MADMAC) $(MACFLAGS) $<
@@ -43,7 +50,7 @@ reset:
 	$(JCP) -r || true
 
 clean:
-	rm -f *~ $(OBJS) $(PROJECT).cof $(PROJECT).bin $(EXTRAS)
+	rm -f *~ $(OBJS) $(PROJECT).cof $(PROJECT).bin $(PROJECT).img $(PROJECT).rom $(EXTRAS)
 
 .depend: $(SRCC)
 	$(CC) $(CFLAGS) -MM $(SRCC) > .depend || [ "$(SRCC)" = "" ]
