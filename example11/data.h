@@ -20,10 +20,4 @@ extern short int X2D[];
 extern short int Y2D[];
 extern int Z3D[];
 
-extern short int A;
-extern short int B;
-extern short int C;
-
-extern short int pause;
-
 #endif

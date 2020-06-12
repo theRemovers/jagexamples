@@ -18,7 +18,7 @@
 #define SIDESHADING GRDSHADING
 //#define SIDESHADING FLTSHADING
 
-#undef SET_BG 
+#undef SET_BG
 
 #define RED 0xf0ff
 #define GREEN 0x7fff
@@ -46,23 +46,23 @@
 
 #define V_TEMPL {0, 0, 0, 0, 0, 0}
 
-polygon petiq = {NULL, GRDSHADING|TXTMAPPING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
+polygon *petiq;
 
-polygon pmetal = {&petiq, GRDSHADING, 4, WHITE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
-polygon pavant = {&pmetal, GRDSHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
-polygon parriere = {&pavant, GRDSHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
+polygon *pmetal;
+polygon *pavant;
+polygon *parriere;
 
-polygon pside1 = {&parriere, SIDESHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
-polygon pside2 = {&pside1, SIDESHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
-polygon pside3 = {&pside2, SIDESHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
-polygon pside4 = {&pside3, SIDESHADING, 4, BLUE, NULL, {V_TEMPL, V_TEMPL, V_TEMPL, V_TEMPL}};
+polygon *pside1;
+polygon *pside2;
+polygon *pside3;
+polygon *pside4;
 
 screen *texture;
 
 #define XCoord(idx) (X2D[idx]<<16)
 #define YCoord(idx) (Y2D[idx]<<16)
 
-int light = 80<<16;
+int light;
 
 #define SAT24(x) (x < 0 ? 0 : (x > 0xffffff ? 0xffffff : x))
 #define I(idx) (SAT24(light + (Z3D[19+idx]<<7)))
@@ -70,189 +70,241 @@ int light = 80<<16;
 
 void switch_flat_mode(int flag) {
   if(flag) {
-    petiq.flags = FLTMAPPING|TXTMAPPING;
+    petiq->flags = FLTMAPPING|TXTMAPPING;
   } else {
-    petiq.flags = TXTMAPPING;
+    petiq->flags = TXTMAPPING;
   }
-  pmetal.flags = FLTSHADING;
-  pavant.flags = FLTSHADING;
-  parriere.flags = FLTSHADING;
-  pside1.flags = FLTSHADING;
-  pside2.flags = FLTSHADING;
-  pside3.flags = FLTSHADING;
-  pside4.flags = FLTSHADING;
+  pmetal->flags = FLTSHADING;
+  pavant->flags = FLTSHADING;
+  parriere->flags = FLTSHADING;
+  pside1->flags = FLTSHADING;
+  pside2->flags = FLTSHADING;
+  pside3->flags = FLTSHADING;
+  pside4->flags = FLTSHADING;
 }
 
 void switch_gouraud_mode() {
-  petiq.flags = GRDSHADING|TXTMAPPING;
-  pmetal.flags = GRDSHADING;
-  pavant.flags = GRDSHADING;
-  parriere.flags = GRDSHADING;
-  pside1.flags = GRDSHADING;
-  pside2.flags = GRDSHADING;
-  pside3.flags = GRDSHADING;
-  pside4.flags = GRDSHADING;
+  petiq->flags = GRDSHADING|TXTMAPPING;
+  pmetal->flags = GRDSHADING;
+  pavant->flags = GRDSHADING;
+  parriere->flags = GRDSHADING;
+  pside1->flags = GRDSHADING;
+  pside2->flags = GRDSHADING;
+  pside3->flags = GRDSHADING;
+  pside4->flags = GRDSHADING;
 }
 
 void set_object() {
   // face avant
-  pavant.vertices[0].x = XCoord(0);
-  pavant.vertices[0].y = YCoord(0);
-  pavant.vertices[1].x = XCoord(1);
-  pavant.vertices[1].y = YCoord(1);
-  pavant.vertices[2].x = XCoord(2);
-  pavant.vertices[2].y = YCoord(2);
-  pavant.vertices[3].x = XCoord(3);
-  pavant.vertices[3].y = YCoord(3);
+  pavant->vertices[0].x = XCoord(0);
+  pavant->vertices[0].y = YCoord(0);
+  pavant->vertices[1].x = XCoord(1);
+  pavant->vertices[1].y = YCoord(1);
+  pavant->vertices[2].x = XCoord(2);
+  pavant->vertices[2].y = YCoord(2);
+  pavant->vertices[3].x = XCoord(3);
+  pavant->vertices[3].y = YCoord(3);
 
-  pavant.vertices[0].i = I(0);
-  pavant.vertices[1].i = I(1);
-  pavant.vertices[2].i = I(2);
-  pavant.vertices[3].i = I(3);
+  pavant->vertices[0].i = I(0);
+  pavant->vertices[1].i = I(1);
+  pavant->vertices[2].i = I(2);
+  pavant->vertices[3].i = I(3);
 
-  pavant.param &= 0xff00;
-  pavant.param |= (((I(0)+I(1)+I(2)+I(3))>>2) >> 16)  & 0xff;
+  pavant->param &= 0xff00;
+  pavant->param |= (((I(0)+I(1)+I(2)+I(3))>>2) >> 16)  & 0xff;
   // etiquette
-  petiq.vertices[0].x = XCoord(4);
-  petiq.vertices[0].y = YCoord(4);
-  petiq.vertices[1].x = XCoord(5);
-  petiq.vertices[1].y = YCoord(5);
-  petiq.vertices[2].x = XCoord(6);
-  petiq.vertices[2].y = YCoord(6);
-  petiq.vertices[3].x = XCoord(7);
-  petiq.vertices[3].y = YCoord(7);
+  petiq->vertices[0].x = XCoord(4);
+  petiq->vertices[0].y = YCoord(4);
+  petiq->vertices[1].x = XCoord(5);
+  petiq->vertices[1].y = YCoord(5);
+  petiq->vertices[2].x = XCoord(6);
+  petiq->vertices[2].y = YCoord(6);
+  petiq->vertices[3].x = XCoord(7);
+  petiq->vertices[3].y = YCoord(7);
 
-  petiq.vertices[0].i = I(4)-(50<<16);
-  petiq.vertices[1].i = I(5)-(50<<16);
-  petiq.vertices[2].i = I(6)-(50<<16);
-  petiq.vertices[3].i = I(7)-(50<<16);
+  petiq->vertices[0].i = I(4)-(50<<16);
+  petiq->vertices[1].i = I(5)-(50<<16);
+  petiq->vertices[2].i = I(6)-(50<<16);
+  petiq->vertices[3].i = I(7)-(50<<16);
 
-  if(petiq.flags & GRDSHADING) {
+  if(petiq->flags & GRDSHADING) {
     texture->data = &texture_gfx;
   } else {
     texture->data = &texture2_gfx;
   }
-  petiq.texture = texture;
-  petiq.vertices[0].u = 1<<16;
-  petiq.vertices[0].v = 1<<16;
-  petiq.vertices[1].u = (TEXTURE_WIDTH-1)<<16;
-  petiq.vertices[1].v = 1<<16;
-  petiq.vertices[2].u = (TEXTURE_WIDTH-1)<<16;
-  petiq.vertices[2].v = (TEXTURE_HEIGHT-1)<<16;
-  petiq.vertices[3].u = 1<<16;
-  petiq.vertices[3].v = (TEXTURE_HEIGHT-1)<<16;
+  petiq->texture = texture;
+  petiq->vertices[0].u = 1<<16;
+  petiq->vertices[0].v = 1<<16;
+  petiq->vertices[1].u = (TEXTURE_WIDTH-1)<<16;
+  petiq->vertices[1].v = 1<<16;
+  petiq->vertices[2].u = (TEXTURE_WIDTH-1)<<16;
+  petiq->vertices[2].v = (TEXTURE_HEIGHT-1)<<16;
+  petiq->vertices[3].u = 1<<16;
+  petiq->vertices[3].v = (TEXTURE_HEIGHT-1)<<16;
 
-  petiq.param &= 0xff00;
-  petiq.param |= (((I(4)+I(5)+I(6)+I(7))>>2) >> 16)  & 0xff;
+  petiq->param &= 0xff00;
+  petiq->param |= (((I(4)+I(5)+I(6)+I(7))>>2) >> 16)  & 0xff;
 
-  petiq.param = ((I(4)+I(5)+I(6)+I(7))>>2) ^ 0x800000;
+  petiq->param = ((I(4)+I(5)+I(6)+I(7))>>2) ^ 0x800000;
   // partie metallique
-  pmetal.vertices[0].x = XCoord(8);
-  pmetal.vertices[0].y = YCoord(8);
-  pmetal.vertices[1].x = XCoord(9);
-  pmetal.vertices[1].y = YCoord(9);
-  pmetal.vertices[2].x = XCoord(10);
-  pmetal.vertices[2].y = YCoord(10);
-  pmetal.vertices[3].x = XCoord(11);
-  pmetal.vertices[3].y = YCoord(11);
+  pmetal->vertices[0].x = XCoord(8);
+  pmetal->vertices[0].y = YCoord(8);
+  pmetal->vertices[1].x = XCoord(9);
+  pmetal->vertices[1].y = YCoord(9);
+  pmetal->vertices[2].x = XCoord(10);
+  pmetal->vertices[2].y = YCoord(10);
+  pmetal->vertices[3].x = XCoord(11);
+  pmetal->vertices[3].y = YCoord(11);
 
-  pmetal.vertices[0].i = I(8);
-  pmetal.vertices[1].i = I(9);
-  pmetal.vertices[2].i = I(10);
-  pmetal.vertices[3].i = I(11);
+  pmetal->vertices[0].i = I(8);
+  pmetal->vertices[1].i = I(9);
+  pmetal->vertices[2].i = I(10);
+  pmetal->vertices[3].i = I(11);
 
-  pmetal.param &= 0xff00;
-  pmetal.param |= (((I(8)+I(9)+I(10)+I(11))>>2) >> 16)  & 0xff;
+  pmetal->param &= 0xff00;
+  pmetal->param |= (((I(8)+I(9)+I(10)+I(11))>>2) >> 16)  & 0xff;
   // face arriere
-  parriere.vertices[0].x = XCoord(15);
-  parriere.vertices[0].y = YCoord(15);
-  parriere.vertices[1].x = XCoord(18);
-  parriere.vertices[1].y = YCoord(18);
-  parriere.vertices[2].x = XCoord(17);
-  parriere.vertices[2].y = YCoord(17);
-  parriere.vertices[3].x = XCoord(16);
-  parriere.vertices[3].y = YCoord(16);
+  parriere->vertices[0].x = XCoord(15);
+  parriere->vertices[0].y = YCoord(15);
+  parriere->vertices[1].x = XCoord(18);
+  parriere->vertices[1].y = YCoord(18);
+  parriere->vertices[2].x = XCoord(17);
+  parriere->vertices[2].y = YCoord(17);
+  parriere->vertices[3].x = XCoord(16);
+  parriere->vertices[3].y = YCoord(16);
 
-  parriere.vertices[0].i = I(15);
-  parriere.vertices[1].i = I(18);
-  parriere.vertices[2].i = I(17);
-  parriere.vertices[3].i = I(16);
+  parriere->vertices[0].i = I(15);
+  parriere->vertices[1].i = I(18);
+  parriere->vertices[2].i = I(17);
+  parriere->vertices[3].i = I(16);
 
-  parriere.param &= 0xff00;
-  parriere.param |= (((I(15)+I(18)+I(17)+I(16))>>2) >> 16)  & 0xff;
+  parriere->param &= 0xff00;
+  parriere->param |= (((I(15)+I(18)+I(17)+I(16))>>2) >> 16)  & 0xff;
   //
-  pside1.vertices[0].x = XCoord(15);
-  pside1.vertices[0].y = YCoord(15);
-  pside1.vertices[1].x = XCoord(16);
-  pside1.vertices[1].y = YCoord(16);
-  pside1.vertices[2].x = XCoord(1);
-  pside1.vertices[2].y = YCoord(1);
-  pside1.vertices[3].x = XCoord(0);
-  pside1.vertices[3].y = YCoord(0);
+  pside1->vertices[0].x = XCoord(15);
+  pside1->vertices[0].y = YCoord(15);
+  pside1->vertices[1].x = XCoord(16);
+  pside1->vertices[1].y = YCoord(16);
+  pside1->vertices[2].x = XCoord(1);
+  pside1->vertices[2].y = YCoord(1);
+  pside1->vertices[3].x = XCoord(0);
+  pside1->vertices[3].y = YCoord(0);
 
-  pside1.vertices[0].i = I(15);
-  pside1.vertices[1].i = I(16);
-  pside1.vertices[2].i = I(1);
-  pside1.vertices[3].i = I(0);
+  pside1->vertices[0].i = I(15);
+  pside1->vertices[1].i = I(16);
+  pside1->vertices[2].i = I(1);
+  pside1->vertices[3].i = I(0);
 
-  pside1.param &= 0xff00;
-  pside1.param |= (((I(15)+I(16)+I(1)+I(0))>>2) >> 16)  & 0xff;
+  pside1->param &= 0xff00;
+  pside1->param |= (((I(15)+I(16)+I(1)+I(0))>>2) >> 16)  & 0xff;
   //
-  pside2.vertices[0].x = XCoord(17);
-  pside2.vertices[0].y = YCoord(17);
-  pside2.vertices[1].x = XCoord(18);
-  pside2.vertices[1].y = YCoord(18);
-  pside2.vertices[2].x = XCoord(3);
-  pside2.vertices[2].y = YCoord(3);
-  pside2.vertices[3].x = XCoord(2);
-  pside2.vertices[3].y = YCoord(2);
+  pside2->vertices[0].x = XCoord(17);
+  pside2->vertices[0].y = YCoord(17);
+  pside2->vertices[1].x = XCoord(18);
+  pside2->vertices[1].y = YCoord(18);
+  pside2->vertices[2].x = XCoord(3);
+  pside2->vertices[2].y = YCoord(3);
+  pside2->vertices[3].x = XCoord(2);
+  pside2->vertices[3].y = YCoord(2);
 
-  pside2.vertices[0].i = I(17);
-  pside2.vertices[1].i = I(18);
-  pside2.vertices[2].i = I(3);
-  pside2.vertices[3].i = I(2);
+  pside2->vertices[0].i = I(17);
+  pside2->vertices[1].i = I(18);
+  pside2->vertices[2].i = I(3);
+  pside2->vertices[3].i = I(2);
 
-  pside2.param &= 0xff00;
-  pside2.param |= (((I(17)+I(18)+I(3)+I(2))>>2) >> 16)  & 0xff;
-  // 
-  pside3.vertices[0].x = XCoord(16);
-  pside3.vertices[0].y = YCoord(16);
-  pside3.vertices[1].x = XCoord(17);
-  pside3.vertices[1].y = YCoord(17);
-  pside3.vertices[2].x = XCoord(2);
-  pside3.vertices[2].y = YCoord(2);
-  pside3.vertices[3].x = XCoord(1);
-  pside3.vertices[3].y = YCoord(1);
-
-  pside3.vertices[0].i = I(16);
-  pside3.vertices[1].i = I(17);
-  pside3.vertices[2].i = I(2);
-  pside3.vertices[3].i = I(1);
-
-  pside3.param &= 0xff00;
-  pside3.param |= (((I(16)+I(17)+I(2)+I(1))>>2) >> 16)  & 0xff;
+  pside2->param &= 0xff00;
+  pside2->param |= (((I(17)+I(18)+I(3)+I(2))>>2) >> 16)  & 0xff;
   //
-  pside4.vertices[0].x = XCoord(18);
-  pside4.vertices[0].y = YCoord(18);
-  pside4.vertices[1].x = XCoord(15);
-  pside4.vertices[1].y = YCoord(15);
-  pside4.vertices[2].x = XCoord(0);
-  pside4.vertices[2].y = YCoord(0);
-  pside4.vertices[3].x = XCoord(3);
-  pside4.vertices[3].y = YCoord(3);
+  pside3->vertices[0].x = XCoord(16);
+  pside3->vertices[0].y = YCoord(16);
+  pside3->vertices[1].x = XCoord(17);
+  pside3->vertices[1].y = YCoord(17);
+  pside3->vertices[2].x = XCoord(2);
+  pside3->vertices[2].y = YCoord(2);
+  pside3->vertices[3].x = XCoord(1);
+  pside3->vertices[3].y = YCoord(1);
 
-  pside4.vertices[0].i = I(18);
-  pside4.vertices[1].i = I(15);
-  pside4.vertices[2].i = I(0);
-  pside4.vertices[3].i = I(3);
+  pside3->vertices[0].i = I(16);
+  pside3->vertices[1].i = I(17);
+  pside3->vertices[2].i = I(2);
+  pside3->vertices[3].i = I(1);
 
-  pside4.param &= 0xff00;
-  pside4.param |= (((I(18)+I(15)+I(0)+I(3))>>2) >> 16)  & 0xff;
+  pside3->param &= 0xff00;
+  pside3->param |= (((I(16)+I(17)+I(2)+I(1))>>2) >> 16)  & 0xff;
+  //
+  pside4->vertices[0].x = XCoord(18);
+  pside4->vertices[0].y = YCoord(18);
+  pside4->vertices[1].x = XCoord(15);
+  pside4->vertices[1].y = YCoord(15);
+  pside4->vertices[2].x = XCoord(0);
+  pside4->vertices[2].y = YCoord(0);
+  pside4->vertices[3].x = XCoord(3);
+  pside4->vertices[3].y = YCoord(3);
+
+  pside4->vertices[0].i = I(18);
+  pside4->vertices[1].i = I(15);
+  pside4->vertices[2].i = I(0);
+  pside4->vertices[3].i = I(3);
+
+  pside4->param &= 0xff00;
+  pside4->param |= (((I(18)+I(15)+I(0)+I(3))>>2) >> 16)  & 0xff;
 }
 
 void draw_object(screen *dst) {
   set_object();
   render_polygon_list(dst,&pside4,CLR_SCREEN);
+}
+
+polygon *alloc_poly(nvertices) {
+  size_t sz = sizeof(polygon) + nvertices * sizeof(vertex);
+  polygon *result = (polygon *)malloc(sz);
+  memset(result, 0, sz);
+  result->size = nvertices;
+  return result;
+}
+
+void init() {
+  light = 80 << 16;
+
+  petiq = alloc_poly(4);
+  petiq->next = NULL;
+  petiq->flags = GRDSHADING|TXTMAPPING;
+  petiq->param = BLUE;
+
+  pmetal = alloc_poly(4);
+  pmetal->next = petiq;
+  pmetal->flags = GRDSHADING;
+  pmetal->param = WHITE;
+
+  pavant = alloc_poly(4);
+  pavant->next = pmetal;
+  pavant->flags = GRDSHADING;
+  pavant->param = BLUE;
+
+  parriere = alloc_poly(4);
+  parriere->next = pavant;
+  parriere->flags = GRDSHADING;
+  parriere->param = BLUE;
+
+  pside1 = alloc_poly(4);
+  pside1->next = parriere;
+  pside1->flags = SIDESHADING;
+  pside1->param = BLUE;
+
+  pside2 = alloc_poly(4);
+  pside2->next = pside1;
+  pside2->flags = SIDESHADING;
+  pside2->param = BLUE;
+
+  pside3 = alloc_poly(4);
+  pside3->next = pside2;
+  pside3->flags = SIDESHADING;
+  pside3->param = BLUE;
+
+  pside4 = alloc_poly(4);
+  pside4->next = pside3;
+  pside4->flags = SIDESHADING;
+  pside4->param = BLUE;
 }
 
 int main(int argc, char *argv[]) {
@@ -270,6 +322,8 @@ int main(int argc, char *argv[]) {
 
   texture = new_screen();
   set_simple_screen(DEPTH16,TEXTURE_WIDTH,TEXTURE_HEIGHT,texture,&texture_gfx);
+
+  init();
 
   sprite *texture_sprite = sprite_of_screen(0,0,texture);
 

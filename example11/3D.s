@@ -19,9 +19,6 @@ _init_3D:
 _animate_3D:
 	movem.l	d2-d7/a2-a6,-(sp)
 
-	.if	1
-	tst.w	_pause
-	bne.s	Pas_mod_c
 	add.w	#2,A
 	cmp.w	#720,A
 	blt.s	Pas_mod_a
@@ -39,7 +36,6 @@ Pas_mod_b:
 	blt.s	Pas_mod_c
 	sub.w	#720,C
 Pas_mod_c:
-	.endif
 ************
 	lea	Mcos,a0
 	lea	Msin,a1
@@ -549,22 +545,12 @@ NYp:	dc.w	38, 38, -40, -40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, -38, -38
 Zp:	dc.w	002,002,002,002,002,002,002,002,002,002,002,002,002,002,002,-02,-02,-02,-02
 NZp:	dc.w	510, 510, 510, 510, 512, 512, 512, 512, 512, 512, 512, 512, 0, 0, 0, -510, -510, -510, -510
 
-	.globl	_pause
-_pause:
-	dc.w	0
-	
-	.globl	_A
-_A:	
-A:	dc.w	0
-	.globl	_B
-_B:	
-B:	dc.w	0
-	.globl	_C
-_C:	
-C:	dc.w	0
-
 	BSS
-	
+
+A:      ds.w    1
+B:      ds.w    1
+C:      ds.w    1
+        
 Cosinus:
 	ds.w	360*3
 Mcos:	ds.w	360*3
