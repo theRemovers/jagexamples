@@ -12,8 +12,10 @@
 
 #include <fb2d.h>
 
-extern phrase font;
-extern long font_offset[256];
+const extern phrase font;
+const extern long font_offset[256];
+
+long fixed_font_offset[256];
 
 #define NB_LETTERS ((320+3*32)/32)
 
@@ -35,11 +37,11 @@ void init_screxx(display *d) {
   int i;
   phrase *gfx;
   for(i = 0; i < 256; i++) {
-    font_offset[i] /= 8;
+    fixed_font_offset[i] = font_offset[i] / 8;
   }
   for(i = 0; i < NB_LETTERS; i++) {
     gfx = &font;
-    gfx += font_offset[(unsigned char)' '];
+    gfx += fixed_font_offset[(unsigned char)' '];
     letter *l = malloc(sizeof(letter));
     set_sprite(&l->s,32,32,32*i,0,DEPTH16,gfx);
     l->s.dwidth = 320*2 / 8;
@@ -61,7 +63,7 @@ void do_screxx() {
     l->vy += GRAVITY;
     if(l->s.y >= 200) {
       l->vy = - (l->vy / 2);
-    } 
+    }
     if(l->s.x <=-32) {
       l->s.x += NB_LETTERS*32;
       if((c = *p_text++) == 0) {
@@ -69,7 +71,7 @@ void do_screxx() {
 	c = *p_text++;
       }
       phrase *gfx = &font;
-      gfx += font_offset[c];
+      gfx += fixed_font_offset[c];
       l->s.data = gfx;
       l->s.y = -32;
       l->vy = 0;
@@ -79,7 +81,7 @@ void do_screxx() {
 
 int main(int argc, char *argv[]) {
   TOMREGS->vmode = RGB16|CSYNC|BGEN|PWIDTH4|VIDEN;
-  
+
   init_interrupts();
   init_display_driver();
 
@@ -97,4 +99,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
