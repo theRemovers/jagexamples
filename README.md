@@ -20,6 +20,6 @@ Common target rules for Makefile (defined in Makefile.example)
 
 - reset: reset SkunkBoard
 - skunk: build COF file and send it to SkunkBoard
-- interactive: build COF file and send it to SkunkBoard and start an interactive session with jcp (useful for jcp supporting Removers extensions)
+- interactive: build COF file, send it to SkunkBoard and start an interactive session with jcp (useful for jcp supporting Removers extensions)
 - flash: build ABS file (located in cartridge area) and flash it to SkunkBoard
 - bjl: build BIN file and send it to BJL
