@@ -47,6 +47,9 @@ debug: $(PROJECT).cof
 skunk: $(PROJECT).cof
 	$(JCP) $<
 
+interactive: $(PROJECT).cof
+	$(JCP) -c $<
+
 flash: $(PROJECT).abs
 	$(JCP) -f $<
 
