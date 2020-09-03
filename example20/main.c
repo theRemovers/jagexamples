@@ -43,6 +43,7 @@ extern phrase black;
 
 tile_t *tile_data;
 int map_x;
+int map_w;
 
 void init_map(void)
 {
@@ -54,6 +55,9 @@ void init_map(void)
     tile_data[i].grid_x = (i % TILES_PER_LINE) * 16;
     tile_data[i].grid_y = (i / TILES_PER_LINE) * 16;
   }
+
+  map_x = 0;
+  map_w = egyptLevel.ncols * 16;
 }
 
 void copy_column(screen *tiles, screen *tgt, level_t *lvl, int lrow, int hrow, int colno) {
@@ -103,7 +107,6 @@ int main(int argc, char *argv[]) {
   phrase *screen1_data = alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, screen1);
   phrase *screen2_data = alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, screen2);
 
-  map_x = 0;
   sprite *screen1_sprite = sprite_of_screen(-map_x, 0, screen1);
   sprite *screen2_sprite = sprite_of_screen(-map_x + WIDTH, 0, screen2);
   screen1_sprite->trans = 0;
@@ -143,26 +146,29 @@ int main(int argc, char *argv[]) {
     unsigned long cmd = joypads.j1;
 
     if(cmd & JOYPAD_RIGHT) {
-      map_x++;
+      if (map_x < map_w - WIDTH) {
+        map_x++;
 
-      if (spr1->x < -WIDTH) {
-        spr1->x += WIDTH << 1;
+        if (spr1->x <= -WIDTH) {
+          spr1->x += 2 * WIDTH;
 
-        screen *tmp_scr = scr1;
-        scr1 = scr2;
-        scr2 = tmp_scr;
+          screen *tmp_scr = scr1;
+          scr1 = scr2;
+          scr2 = tmp_scr;
 
-        sprite *tmp_spr = spr1;
-        spr1 = spr2;
-        spr2 = tmp_spr;
-      }
+          sprite *tmp_spr = spr1;
+          spr1 = spr2;
+          spr2 = tmp_spr;
+        }
 
-      spr1->x--;
-      spr2->x--;
+        spr1->x--;
+        spr2->x--;
 
-      if (map_x & 15) {
-        int map_tx = map_x >> 4;
-        copy_zone(tiles, scr2, &egyptLevel, map_tx << 4, 0, 0, HEIGHT/16, WIDTH/16 + 1 + map_tx, WIDTH/16 + 2 + map_tx);
+        if (map_x & 15) {
+          int map_tx = map_x >> 4;
+          int dx = (map_tx << 4) % WIDTH;
+          copy_zone(tiles, scr2, &egyptLevel, dx, 0, 0, HEIGHT/16, WIDTH/16 + 1 + map_tx, WIDTH/16 + 2 + map_tx);
+        }
       }
     }
 
