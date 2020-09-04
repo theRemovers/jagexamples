@@ -7,7 +7,7 @@ Do not forget to define the following environment variables:
 export JAGPATH=/path/to/Jaguar-tree
 
 It is assumed that Jaguar-tree has a 'bin' subdirectory which contains
-- the Atari tools (MadMac, ALN, rdbjag, wdb) 
+- the Atari tools (MadMac [or rmac], ALN [or jlinker], rdbjag, wdb) 
 - the BJL loader (lo)
 - the Skunk loader (jcp)
 - the Removers Jaguar image converter
