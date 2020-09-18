@@ -37,7 +37,10 @@ extern phrase black;
 #define TILES_PER_LINE (320 / 16)
 #define NUM_TILES (TILES_PER_LINE * 192 / 16)
 
+#define DEBUG
+#ifdef DEBUG
 #include <console.h>
+#endif
 
 #define SWAP(typ, v1, v2) { typ tmp = v1; v1 = v2; v2 = tmp; }
 
@@ -96,7 +99,9 @@ int main(int argc, char *argv[]) {
 
   memcpy((void*)TOMREGS->clut1, egyptPal, NCOLS*sizeof(uint16_t));
 
+#ifdef DEBUG
   FILE *console = open_console(d, 0, HEIGHT, NCOLS / 2 + 1);
+#endif
 
   screen *tiles = new_screen();
   set_simple_screen(DEPTH8, 320, HEIGHT, tiles, (phrase *)egyptTiles);
@@ -107,15 +112,20 @@ int main(int argc, char *argv[]) {
   phrase *screen1_data = alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, screen1);
   phrase *screen2_data = alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, screen2);
 
-  sprite *screen1_sprite = sprite_of_screen(-map_x, 0, screen1);
-  sprite *screen2_sprite = sprite_of_screen(-map_x + WIDTH, 0, screen2);
+  sprite *screen1_sprite = sprite_of_screen(0, 0, screen1);
+  sprite *screen2_sprite = sprite_of_screen(WIDTH, 0, screen2);
   screen1_sprite->trans = 0;
   screen2_sprite->trans = 0;
 
-  //sprite *black_border = new_sprite(16, 1, -16, 0, DEPTH16, &black);
-  //black_border->trans = 0;
-  //black_border->dwidth = 0;
-  //black_border->height = HEIGHT;
+  sprite *black_border1 = new_sprite(16, 1, -16 + 8, 0, DEPTH16, &black);
+  black_border1->trans = 0;
+  black_border1->dwidth = 0;
+  black_border1->height = HEIGHT;
+
+  sprite *black_border2 = new_sprite(16, 1, WIDTH - 8, 0, DEPTH16, &black);
+  black_border2->trans = 0;
+  black_border2->dwidth = 0;
+  black_border2->height = HEIGHT;
 
   clear_screen(screen1);
   clear_screen(screen2);
@@ -127,7 +137,8 @@ int main(int argc, char *argv[]) {
 
   attach_sprite_to_display_at_layer(screen1_sprite, d, 0);
   attach_sprite_to_display_at_layer(screen2_sprite, d, 0);
-  //attach_sprite_to_display_at_layer(black_border, d, 1);
+  attach_sprite_to_display_at_layer(black_border1, d, 1);
+  attach_sprite_to_display_at_layer(black_border2, d, 1);
 
   init_map();
   copy_zone(tiles, scr1, &egyptLevel, 0, 0, 0, HEIGHT/16, 0, WIDTH/16);
@@ -135,8 +146,10 @@ int main(int argc, char *argv[]) {
 
   show_display(d);
 
+#ifdef DEBUG
   fprintf(console, "nrows = %d, ncols = %d\n", egyptLevel.nrows, egyptLevel.ncols);
   fprintf(console, "width = %d, height = %d\n", video_width / 4, video_height);
+#endif
 
   joypad_state joypads;
 
@@ -164,10 +177,35 @@ int main(int argc, char *argv[]) {
         spr1->x--;
         spr2->x--;
 
-        if (map_x & 15) {
+        if ((map_x & 15) == 8) {
           int map_tx = map_x >> 4;
           int dx = (map_tx << 4) % WIDTH;
-          copy_zone(tiles, scr2, &egyptLevel, dx, 0, 0, HEIGHT/16, WIDTH/16 + 1 + map_tx, WIDTH/16 + 2 + map_tx);
+          copy_zone(tiles, scr2, &egyptLevel, dx, 0, 0, HEIGHT/16, WIDTH/16 + map_tx, WIDTH/16 + map_tx + 1);
+        }
+      }
+    } else if(cmd & JOYPAD_LEFT) {
+      if (map_x > 0) {
+        map_x--;
+
+        if (spr2->x >= WIDTH) {
+          spr2->x -= 2 * WIDTH;
+
+          screen *tmp_scr = scr1;
+          scr1 = scr2;
+          scr2 = tmp_scr;
+
+          sprite *tmp_spr = spr1;
+          spr1 = spr2;
+          spr2 = tmp_spr;
+        }
+
+        spr1->x++;
+        spr2->x++;
+
+        if ((map_x & 15) == 8) {
+          int map_tx = map_x >> 4;
+          int dx = (map_tx << 4) % WIDTH;
+          copy_zone(tiles, scr1, &egyptLevel, dx, 0, 0, HEIGHT/16, map_tx, map_tx + 1);
         }
       }
     }
@@ -184,3 +222,4 @@ int main(int argc, char *argv[]) {
   free(tiles);
   free(tile_data);
 }
+
