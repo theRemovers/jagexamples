@@ -7,7 +7,7 @@ SRCH=
 OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
 OTHEROBJS=
 DATA=egypt.png egypt.lev
-RMVLIBS=display.o interrupt.o lz77.o rmvlib.a
+RMVLIBS=display.o interrupt.o rmvlib.a
 
 include Makefile.example
 
