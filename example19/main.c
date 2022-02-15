@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
 
   uint16_t *pal = willowPal;
 
-  void *gpu_addr = &_GPU_FREE_RAM;
-  void *lz77_addr = init_lz77(gpu_addr);
+  void *lz77_addr = &_GPU_FREE_RAM;
+  void *gpu_ram = lz77_init(lz77_addr);
 
   display *d = new_display(0);
   d->x = 16;
@@ -41,9 +41,9 @@ int main(int argc, char *argv[]) {
   screen *original = new_screen();
   phrase *map=alloc_simple_screen(DEPTH8, WIDTH, HEIGHT, original);
 
-  lz77_unpack(&willowPacked, (uint8_t*)map);
+  lz77_unpack(lz77_addr, (uint8_t *)&willowPacked, (uint8_t *)map);
 
-  memcpy(TOMREGS->clut1, pal, NCOLS*sizeof(uint16_t));
+  memcpy((void *)TOMREGS->clut1, pal, NCOLS*sizeof(uint16_t));
 
   joypad_state *j_state = malloc(sizeof(joypad_state));
 
