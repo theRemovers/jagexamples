@@ -50,7 +50,7 @@ int rand5() {
     result = next & 0x7;
     next = next >> 3;
     available -= 3;
-  } while(5 < result);
+  } while(5 <= result);
   return result;
 }
 
@@ -59,7 +59,7 @@ void init_blobs(display *d) {
   for(i = 0; i < NB_BLOBS; i++) {
     animation_index[i] = 0;
     animation_tick[i] = 0;
-    animation_speed[i] = rand5();
+    animation_speed[i] = 1 + rand5();
     sprite *s = new_sprite(BLOB_W, BLOB_H, XCENTER, YCENTER, DEPTH16, blob48_animation[animation_index[i]]);
     s->rmw = 1;
     blobs[i] = s;
@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
   init_interrupts();
   init_display_driver();
 
+  TOMREGS->bg = 0x8800;
   display *d = new_display(0);
 
   init_blobs(d);
