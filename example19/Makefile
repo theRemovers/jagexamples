@@ -8,7 +8,7 @@ OBJS=$(SRCC:.c=.o) $(SRCS:.s=.o)
 OTHEROBJS=
 DATA=willow.png
 EXTRAS=willow.map willow_rgb.pal
-RMVLIBS=display.o interrupt.o lz77.o rmvlib.a
+RMVLIBS=display.o gpudriver.o interrupt.o lz77.o rmvlib.a
 
 include Makefile.example
 
